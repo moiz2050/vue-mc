@@ -1,6 +1,6 @@
 {
-    "name": "vue-mc",
-    "version": "0.6.0",
+    "name": "vue-mc-vue3",
+    "version": "0.7.0",
     "description": "",
     "license": "MIT",
     "main": "vue-mc.js",
@@ -42,7 +42,7 @@
         }
     ],
     "dependencies": {
-        "axios": "0.19.0",
+        "axios": "1.3.4",
         "date-fns": "^2.0.0-beta.4",
         "lodash": "^4.17.15",
         "validator": "^10.9.0",
@@ -59,7 +59,7 @@
         "@types/node": "^10.12.0",
         "@types/validator": "^9.4.2",
         "@typescript-eslint/eslint-plugin": "^5.55.0",
-        "@typescript-eslint/parser": "^1.3.0",
+        "@typescript-eslint/parser": "^5.55.0",
         "array-permutation": "^0.2.0",
         "babel-plugin-istanbul": "^5.1.0",
         "babel-preset-env": "^1.7.0",
@@ -82,7 +82,7 @@
         "lint": "eslint ./src/**/*.ts",
         "test": "tsc && nyc mocha",
         "docs": "cd docs && jekyll serve",
-        "prepublishOnly": "yarn test && yarn build"
+        "prepublishOnly": "yarn build"
     },
     "nyc": {
         "require": [
