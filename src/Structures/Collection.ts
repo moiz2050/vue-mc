@@ -1,5 +1,3 @@
-import Vue from 'vue';
-
 import countBy from 'lodash/countBy';
 import defaultsDeep from 'lodash/defaultsDeep';
 import each from 'lodash/each';
@@ -80,10 +78,10 @@ class Collection extends Base {
     constructor(models: Model[] = [], options: Options = {}, attributes: Record<string, any> = {}) {
         super(options);
 
-        Vue.set(this, 'models', []);      // Model store.
-        Vue.set(this, '_attributes', {}); // Property store.
-        Vue.set(this, '_registry', {});   // Model registry.
-        Vue.set(this, '_page', NO_PAGE);
+        this['models'] = [];      // Model store.
+        this['_attributes'] = {} // Property store.
+        this['_registry'] = {};   // Model registry.
+        this['_page'] = NO_PAGE;
 
         this.clearState();
 
@@ -145,7 +143,7 @@ class Collection extends Base {
             return;
         }
 
-        Vue.set(this._attributes, attribute as string, value);
+        this._attributes[attribute as string] = value;
     }
 
     /**
@@ -199,10 +197,14 @@ class Collection extends Base {
      * Resets model state, ie. `loading`, etc back to their initial states.
      */
     clearState(): void {
-        Vue.set(this, 'loading', false);
-        Vue.set(this, 'saving', false);
-        Vue.set(this, 'deleting', false);
-        Vue.set(this, 'fatal', false);
+        // @ts-ignore
+        this['loading'] = false;
+        // @ts-ignore
+        this['saving'] = false;
+        // @ts-ignore
+        this['deleting'] = false;
+        // @ts-ignore
+        this['fatal'] = false;
     }
 
     /**
@@ -212,7 +214,7 @@ class Collection extends Base {
         let models: Model[] = this.models;
 
         // Clear the model store, but keep a reference.
-        Vue.set(this, 'models', []);
+        this['models'] = [];
 
         // Notify each model that it has been removed from this collection.
         each(models, (model: Model): void => {
@@ -371,7 +373,8 @@ class Collection extends Base {
         this.onAdd(model as Model);
 
         // We're assuming that the collection is not loading once a model is added.
-        Vue.set(this, 'loading', false);
+        // @ts-ignore
+        this['loading'] = false;
 
         return model;
     }
@@ -401,7 +404,7 @@ class Collection extends Base {
         }
 
         let model: Model = get(this.models, index);
-        Vue.delete(this.models, index);
+        delete this.models[index];
         this.onRemove(model);
 
         return model;
@@ -631,7 +634,7 @@ class Collection extends Base {
      *                                     invoked with a single arg `model`.
      */
     sort(comparator: ((model: Model) => any) | string): void {
-        Vue.set(this, 'models', sortBy(this.models, comparator));
+        this['models'] = sortBy(this.models, comparator);
     }
 
     /**
@@ -781,8 +784,10 @@ class Collection extends Base {
             });
         }
 
-        Vue.set(this, 'saving', false);
-        Vue.set(this, 'fatal', false);
+        // @ts-ignore
+        this['saving'] = false;
+        // @ts-ignore
+        this['fatal'] = false;
 
         this.emit('save', {error: null});
     }
@@ -824,8 +829,10 @@ class Collection extends Base {
         // in the response are in the same order as they are in the collection.
         each(models, (model, index): void => {
             model.setErrors(errors[index]);
-            Vue.set(model, 'saving', false);
-            Vue.set(model, 'fatal', false);
+            // @ts-ignore
+            model['saving'] = false;
+            // @ts-ignore
+            model['fatal'] = false;
         });
     }
 
@@ -888,8 +895,10 @@ class Collection extends Base {
 
         this.setErrors(errors);
 
-        Vue.set(this, 'fatal', false);
-        Vue.set(this, 'saving', false);
+        // @ts-ignore
+        this['fatal'] = false;
+        // @ts-ignore
+        this['saving'] = false;
     }
 
     /**
@@ -904,8 +913,10 @@ class Collection extends Base {
             model.onFatalSaveFailure(error, response);
         });
 
-        Vue.set(this, 'fatal', true);
-        Vue.set(this, 'saving', false);
+        // @ts-ignore
+        this['fatal'] = true;
+        // @ts-ignore
+        this['saving'] = false;
     }
 
     /**
@@ -944,12 +955,14 @@ class Collection extends Base {
     page(page: number | boolean): this {
         // Disable pagination if a valid page wasn't provided.
         if (isNil(page)) {
-            Vue.set(this, '_page', NO_PAGE);
+            // @ts-ignore
+            this['_page'] = NO_PAGE;
 
             // Page was provided, so we should either set the page or disable
             // pagination entirely if the page is `false`.
         } else {
-            Vue.set(this, '_page', max([1, toSafeInteger(page)]));
+            // @ts-ignore
+            this['_page'] = max([1, toSafeInteger(page)]);
         }
 
         return this;
@@ -988,12 +1001,14 @@ class Collection extends Base {
         // If no models were returned in the response we can assume that
         // we're now on the last page, and we should not continue.
         if (isEmpty(models)) {
-            Vue.set(this, '_page', LAST_PAGE);
+            // @ts-ignore
+            this['_page'] = LAST_PAGE;
 
             // Otherwise, there were at least one model, and we can safely
             // assume that we want to increment the page number.
         } else {
-            Vue.set(this, '_page', (this._page as number) + 1);
+            // @ts-ignore
+            this['_page'] = (this._page as number) + 1;
             this.add(models);
         }
     }
@@ -1021,8 +1036,10 @@ class Collection extends Base {
             this.replace(models);
         }
 
-        Vue.set(this, 'loading', false);
-        Vue.set(this, 'fatal', false);
+        // @ts-ignore
+        this['loading'] = false;
+        // @ts-ignore
+        this['fatal'] = false;
 
         this.emit('fetch', {error: null});
     }
@@ -1035,8 +1052,10 @@ class Collection extends Base {
     onFetchFailure(error: any): void {
         this.clearErrors();
 
-        Vue.set(this, 'fatal', true);
-        Vue.set(this, 'loading', false);
+        // @ts-ignore
+        this['fatal'] = true;
+        // @ts-ignore
+        this['loading'] = false;
 
         this.emit('fetch', {error});
     }
@@ -1056,7 +1075,8 @@ class Collection extends Base {
 
             // Because we're fetching new data, we can assume that this collection
             // is now loading. This allows the template to indicate a loading state.
-            Vue.set(this, 'loading', true);
+            // @ts-ignore
+            this['loading'] = true;
             resolve(Base.REQUEST_CONTINUE);
             return;
         });
@@ -1068,8 +1088,10 @@ class Collection extends Base {
      * @param {Object} response
      */
     onDeleteSuccess(response: Response): void {
-        Vue.set(this, 'deleting', false);
-        Vue.set(this, 'fatal', false);
+        // @ts-ignore
+        this['deleting'] = false;
+        // @ts-ignore
+        this['fatal'] = false;
 
         each(this.getDeletingModels(), (model): void => {
             model.onDeleteSuccess(response);
@@ -1085,8 +1107,10 @@ class Collection extends Base {
      * @param {Object} response
      */
     onDeleteFailure(error: any): void {
-        Vue.set(this, 'fatal', true);
-        Vue.set(this, 'deleting', false);
+        // @ts-ignore
+        this['fatal'] = true;
+        // @ts-ignore
+        this['deleting'] = false;
 
         each(this.getDeletingModels(), (model): void => {
             model.onDeleteFailure(error);
@@ -1128,7 +1152,8 @@ class Collection extends Base {
                 throw new ValidationError(this.getErrors());
             }
 
-            Vue.set(this, 'saving', true);
+            // @ts-ignore
+            this['saving'] = true;
             return Base.REQUEST_CONTINUE;
         });
     }
@@ -1195,7 +1220,8 @@ class Collection extends Base {
                     return Base.REQUEST_REDUNDANT;
                 }
 
-                Vue.set(this, 'deleting', true);
+                // @ts-ignore
+                this['deleting'] = true;
                 return Base.REQUEST_CONTINUE;
             });
     }
