@@ -360,7 +360,7 @@ class Model extends Base {
             throw new Error('Collection is not valid');
         }
 
-        this._collections.splice(Number(collection._uid), 1);
+        delete this._collections[collection._uid];
     }
 
     /**
