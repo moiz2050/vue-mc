@@ -404,7 +404,7 @@ class Collection extends Base {
         }
 
         let model: Model = get(this.models, index);
-        delete this.models[index];
+        this.models.splice(index, 1);
         this.onRemove(model);
 
         return model;
